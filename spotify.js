@@ -1,68 +1,40 @@
-//
-//
-// var getFromApi = function(endpoint, query={}) {
-//     const url = new URL(`https://api.spotify.com/v1/${endpoint}`);
-//     Object.keys(query).forEach(key => url.searchParams.append(key, query[key]));
-//     return fetch(url).then(function(response) {
-//         if (!response.ok) {
-//             return Promise.reject(response.statusText);
-//         }
-//         return response.json();
-//     });
-// };
-
-
-
-
 let artist;
 
-var getFromApi = function(endpoint, query) {
-	const url = new URL(`https://api.spotify.com/v1/${endpoint}`);
-	Object.keys(query).forEach(key => url.searchParams.append(key, query[key]));
-	console.log(url);
+var getFromApi = function(endpoint, query={}) {
+	const url = new URL(`https://api.spotify.com/v1/${endpoint}`);		
+	Object.keys(query).forEach(key => url.searchParams.append(key, query[key]));	
+	
 	return fetch(url).then(function(response) {
 		if (!response.ok) {
-			// throw new error ('no response!');
-			return Promise.reject(new Error('querry failed'));
-		}
+			return Promise.reject(response.statusText);
+		}		
 		return response.json();
-	}).then(response => {
-		if (response.artists.items.length === 0){
-			throw new Error('No results! Check query!')
-		}
-		console.log(response);
-		let resultID = response.artists.items[0].id;
-		return response;
-	 })
-
-	.catch(function(err) {
-		console.error(err);
-	})
+	});
 };
-var getArtist = function(name) {
-//https://api.spotify.com/v1/artists/{id}/related-artists
+
+var getArtist = function(name) {	
 	let query = {
-		 q: name,
-		 limit: 5,
-		 type: 'artist'
+	  q: name,
+		limit: 10,
+		type: 'artist'
 	};
-	artist = getFromApi('search', query);
-  return getFromApi(`artists/${resultID}/related-artists`, query);
+	
+	return getFromApi('search', query).then(response => {
+		artist = response.artists.items[0];		
+		let id = artist.id;		
+		
+		return getFromApi(`artists/${id}/related-artists`, query).then(relatedResponse => {
+			artist.related = relatedResponse.artists;			
+			let relatedArtistsId = artist.related.map(val => {
+				let topSongsUrl = `artists/${val.id}/toptracks`;
+				let topSongsQuery = {country: 'US'};				
+				return getFromApi(topSongsUrl, topSongsQuery);
+			});			
+			
+			return Promise.all(relatedArtistsId).then(response => {
+				artist.tracks = response.tracks;
+				return artist;
+			});
+		}).catch(err => console.error(err));		
+	});
 };
-
-// var artist;
-
-//
-// function getArtist(name) {
-//
-// 	artist = { artist: name.artists.items[0] };
-// 	let relatedArtists = [];
-//
-// 	for(let i = 1; i < name.artists.items.length; i++) {
-// 		relatedArtists.push(name.artists.items[i]);
-// 	}
-// 	artist.related = relatedArtists;
-// 	return artist;
-// }
-//
-// getFromApi(getSkrillex);
