@@ -1,4 +1,4 @@
-const getSkrillex = `search?q=skrillex&limit=1&type=artist`;
+const getSkrillex = `search?q=skrillex&limit=10&type=artist`;
 
 var getFromApi = function(endpoint) {
 	const url = new URL(`https://api.spotify.com/v1/${endpoint}`);
@@ -21,12 +21,18 @@ var getFromApi = function(endpoint) {
 };
 
 
-var artist;
+let artist;
 
-var getArtist = function(name) {
-	artist = name.artists.items[0];
-	console.log(artist);
+function getArtist(name) {
+	
+	artist = { artist: name.artists.items[0] };
+	let relatedArtists = [];
+	
+	for(let i = 1; i < name.artists.items.length; i++) {
+		relatedArtists.push(name.artists.items[i]);
+	}
+	artist.related = relatedArtists;
 	return artist;
-};
+}
 
 getFromApi(getSkrillex);
