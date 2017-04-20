@@ -15,9 +15,9 @@ var getFromApi = function(endpoint) {
 		}
 		 getArtist(response);
 		 const relatedURL = `https://api.spotify.com/v1/artists/${response.artists.items[0].id}/related-artists`;
-		 fetch(relatedURL);
+		 return fetch(relatedURL);
 	 }).then(stream =>{
-		 console.log(stream);
+		 console.log(stream.body);
 		//  artist.related = stream.
 	 })
 
