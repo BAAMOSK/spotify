@@ -118,7 +118,7 @@ Spotify.prototype.onSearchSubmitted = function(event) {
 };
 
 Spotify.prototype.search = function(name) {
-    getArtist(name).then(this.onSearchDone.bind(this));
+	getArtist(name).then(this.onSearchDone.bind(this));
 };
 
 Spotify.prototype.onSearchDone = function(artist) {

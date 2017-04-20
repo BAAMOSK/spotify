@@ -1,3 +1,29 @@
+
+
+var getFromApi = function(endpoint, query={}) {
+    const url = new URL(`https://api.spotify.com/v1/${endpoint}`);
+    Object.keys(query).forEach(key => url.searchParams.append(key, query[key]));
+    return fetch(url).then(function(response) {
+        if (!response.ok) {
+            return Promise.reject(response.statusText);
+        }
+        return response.json();
+    });
+};
+
+
+
+var artist;
+var getArtist = function(name) {
+  
+	let query = { q: name,
+						 	limit: limit,
+						 	type: artist
+						};
+};
+
+
+
 const getSkrillex = `search?q=skrillex&limit=10&type=artist`;
 
 var getFromApi = function(endpoint) {
@@ -27,7 +53,6 @@ var getFromApi = function(endpoint) {
 };
 
 
-let artist;
 
 function getArtist(name) {
 
