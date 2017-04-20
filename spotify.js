@@ -13,8 +13,14 @@ var getFromApi = function(endpoint) {
 		if (response.artists.items.length === 0){
 			throw new Error('No results! Check query!')
 		}
-		 getArtist(response)
+		 getArtist(response);
+		 const relatedURL = `https://api.spotify.com/v1/artists/${response.artists.items[0].id}/related-artists`;
+		 fetch(relatedURL);
+	 }).then(stream =>{
+		 console.log(stream);
+		//  artist.related = stream.
 	 })
+
 	.catch(function(err) {
 		console.error(err);
 	})
@@ -24,14 +30,14 @@ var getFromApi = function(endpoint) {
 let artist;
 
 function getArtist(name) {
-	
+
 	artist = { artist: name.artists.items[0] };
-	let relatedArtists = [];
-	
-	for(let i = 1; i < name.artists.items.length; i++) {
-		relatedArtists.push(name.artists.items[i]);
-	}
-	artist.related = relatedArtists;
+	// let relatedArtists = [];
+	//
+	// for(let i = 1; i < name.artists.items.length; i++) {
+	// 	relatedArtists.push(name.artists.items[i]);
+	// }
+	// artist.related = relatedArtists;
 	return artist;
 }
 
